@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Controllers;
+
+class Home extends BaseController
+{
+    public function index()
+    {
+        return view('welcome_message');
+    }
+
+    public function tester()
+    {
+        return  $this->response->setJSON([
+            'status'    => true,
+            'message'   => 'success'
+        ]);
+    }
+}
