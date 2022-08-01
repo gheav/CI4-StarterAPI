@@ -25,10 +25,12 @@ class BasicAuth implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $username = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : "";
-        $password = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : "";
+        $database   = \Config\Database::connect();
+        $username   = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : "";
+        $password   = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : "";
+        $app        = $database->table('application')->getWhere(['id' => 1])->getRowArray();
 
-        if ($username != "starterapi" || $password != "gheav") {
+        if ($username != $app['app_code'] || $password !=  $app['app_key']) {
             header("Content-type: application/json");
             echo json_encode([
                 "status"    => false,
