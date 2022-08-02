@@ -3,6 +3,7 @@
 namespace Config;
 
 use App\Filters\BasicAuth;
+use App\Filters\Signature;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Config\BaseConfig;
@@ -24,7 +25,8 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        "basicauth"     => BasicAuth::class
+        "basicauth"     => BasicAuth::class,
+        "signature"     => Signature::class
     ];
 
     /**
@@ -39,6 +41,7 @@ class Filters extends BaseConfig
             // 'csrf',
             // 'invalidchars',
             'basicauth'    => ['except' => ['/']],
+            'signature'    => ['except' => ['/', 'login']],
         ],
         'after' => [
             'toolbar',

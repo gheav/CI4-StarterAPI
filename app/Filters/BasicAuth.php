@@ -2,9 +2,10 @@
 
 namespace App\Filters;
 
-use CodeIgniter\Filters\FilterInterface;
+use App\Models\CommonModel;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Filters\FilterInterface;
 
 class BasicAuth implements FilterInterface
 {
@@ -25,17 +26,18 @@ class BasicAuth implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $database   = \Config\Database::connect();
+        $this->CommonModel = new CommonModel();
+        $authKey    = $this->CommonModel->getAuthKey();
         $username   = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : "";
         $password   = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : "";
-        $app        = $database->table('application')->getWhere(['id' => 1])->getRowArray();
 
-        if ($username != $app['app_code'] || $password !=  $app['app_key']) {
+        if ($username != $authKey['app_code'] || $password !=  $authKey['app_key']) {
             header("Content-type: application/json");
             echo json_encode([
                 "status"    => false,
                 "message"   => "Invalid credentials"
             ]);
+            die;
         }
     }
 

@@ -2,12 +2,14 @@
 
 namespace App\Controllers;
 
+use App\Models\CommonModel;
 use CodeIgniter\Controller;
+use Psr\Log\LoggerInterface;
+use App\Libraries\JsonWebToken;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class BaseController
@@ -35,7 +37,7 @@ abstract class BaseController extends Controller
      *
      * @var array
      */
-    protected $helpers = [];
+    protected $helpers = ['cookie', 'date', 'security', 'crypto'];
 
     /**
      * Constructor.
@@ -45,8 +47,15 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
-
-        // E.g.: $this->session = \Config\Services::session();
+        $this->db           = \Config\Database::connect();
+        $this->validation   = \Config\Services::validation();
+        $this->CommonModel  = new CommonModel();
+        $segment            = $this->request->uri->getSegment(1);
+        if ($segment != 'login' && $segment != '') {
+            $Xsignature     = $this->request->getHeaderLine('X-Signature');
+            $signature      = JsonWebToken::signatureDecode($Xsignature);
+            $this->uid      = depalladium($signature['uid']);
+            $this->user     = $this->CommonModel->getUsers(userID: $this->uid);
+        }
     }
 }

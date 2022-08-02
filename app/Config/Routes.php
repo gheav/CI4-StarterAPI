@@ -36,7 +36,10 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
-$routes->get('tester', 'Home::tester');
+$routes->post('registration', 'Home::registration');
+$routes->post('login', 'Home::login');
+$routes->get('logout', 'Home::logout');
+$routes->get('users', 'Home::users');
 
 /*
  * --------------------------------------------------------------------
